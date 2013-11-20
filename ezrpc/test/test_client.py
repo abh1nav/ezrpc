@@ -3,7 +3,7 @@
 
 import time
 
-from client import Client
+from ezrpc import Client
 
 c = Client('tcp://127.0.0.1:5001', timeout=1000)
 
