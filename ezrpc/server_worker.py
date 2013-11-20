@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import json
+
 import zmq
 
 class ServerWorker(object):
@@ -59,9 +61,21 @@ class ServerWorker(object):
         self._connect()
         while not self.interrupted:
             self.poller.poll()
+            try:
+                req = json.loads(self.socket.recv(zmq.NOBLOCK))
+                print 'Invoking method "%s"' % req['method']
+                res = self.registry[req['method']](*req['args'])
 
+                self.socket.send(str(res))
+            except zmq.ZMQError:
+                self._disconnect()
+                self._connect()
 
 
     def invoke(self, method_name, *args):
         """ Invoke an RPC method. """
         self.registry(method_name, args)
+
+
+    def interrupt(self):
+        self.interrupted = True

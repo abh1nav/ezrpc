@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from ezrpc.server import Server
+import server
 
-s = Server()
+s = server.Server()
 s.start()
